@@ -6,12 +6,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.shinepilates.finalprojectserver.entity.UserEntity;
 import ru.shinepilates.finalprojectserver.exeptions.UserAlreadyExistException;
+import ru.shinepilates.finalprojectserver.model.UserModel;
 import ru.shinepilates.finalprojectserver.repository.UsersRepository;
 import ru.shinepilates.finalprojectserver.service.UserService;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import javax.jws.soap.SOAPBinding;
+import java.util.*;
 
 @RestController
 public class UserController {
@@ -25,14 +25,18 @@ public class UserController {
     }
 
     @PostMapping("/users")
-    public void postUser(@RequestBody UserEntity user) {
+    public UserEntity postUser(@RequestBody UserEntity user) {
+        UserEntity u = new UserEntity();
         try {
             userService.registration(user);
-            //return "Пользователь успешно сохранен";
+            u.setFirstname("Пользователь успешно сохранен");
+            return u;
         } catch (UserAlreadyExistException e) {
-            //return e.getMessage();
+            u.setFirstname(e.getMessage());
+            return u;
         } catch (Exception e) {
-            //return "Произошла ошибка";
+            u.setFirstname("Произошла ошибка");
+            return u;
         }
     }
     /*
@@ -46,8 +50,13 @@ public class UserController {
     }
     */
     @PutMapping("/users")
-    public UserEntity updateUser(@RequestBody UserEntity user){
-        return userService.update(user);
+    public UserEntity updateUser(@RequestBody UserModel user){
+        String s = user.getLastphone();
+        if (s.equals("-")){
+            return userService.update(user);
+        } else {
+            return userService.updateWithPhone(user);
+        }
     }
 }
 
