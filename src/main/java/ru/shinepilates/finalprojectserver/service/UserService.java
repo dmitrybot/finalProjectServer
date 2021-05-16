@@ -51,4 +51,29 @@ public class UserService {
         }
         return usersRepository.save(user.ModelToEntity());
     }
+
+    public void delete(UserEntity user){
+        for (UserEntity u: usersRepository.findAll()){
+            if (u.getId() == user.getId()){
+                usersRepository.delete(u);
+            }
+        }
+    }
+
+    public UserEntity authorisation(UserEntity user){
+        UserEntity u = usersRepository.findByPhone(user.getPhone());
+        if (u != null) {
+            if (u.getPassword().equals(user.getPassword())){
+                return u;
+            } else {
+                u = new UserEntity();
+                u.setPhone("password");
+                return u;
+            }
+        } else {
+            u = new UserEntity();
+            u.setPhone("phone");
+            return u;
+        }
+    }
 }

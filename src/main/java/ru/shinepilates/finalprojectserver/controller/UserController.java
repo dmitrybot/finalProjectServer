@@ -24,6 +24,11 @@ public class UserController {
         return userService.getAllUsers();
     }
 
+    @PostMapping("/user")
+    public UserEntity getUser(@RequestBody UserEntity user){
+        return userService.authorisation(user);
+    }
+
     @PostMapping("/users")
     public UserEntity postUser(@RequestBody UserEntity user) {
         UserEntity u = new UserEntity();
@@ -39,16 +44,12 @@ public class UserController {
             return u;
         }
     }
-    /*
-    @DeleteMapping("/employees/{id}")
-    public void deleteEmployee(@PathVariable Long id){
-        for (Employee employee: employees){
-            if (employee.getId() == id){
-                employees.remove(employee);
-            }
-        }
+
+    @DeleteMapping("/users")
+    public void deleteUser(@RequestBody UserEntity user){
+        userService.delete(user);
     }
-    */
+
     @PutMapping("/users")
     public UserEntity updateUser(@RequestBody UserModel user){
         String s = user.getLastphone();
