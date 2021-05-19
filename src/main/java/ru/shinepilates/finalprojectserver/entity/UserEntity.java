@@ -3,6 +3,7 @@ package ru.shinepilates.finalprojectserver.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @Setter
@@ -25,4 +26,7 @@ public class UserEntity {
     private int role;
     private String birthdata;
     private String sex;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    private List<NotificationEntity> notifications;
 }

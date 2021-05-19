@@ -6,12 +6,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.shinepilates.finalprojectserver.entity.UserEntity;
 import ru.shinepilates.finalprojectserver.exeptions.UserAlreadyExistException;
+import ru.shinepilates.finalprojectserver.model.NotificationModel;
 import ru.shinepilates.finalprojectserver.model.UserModel;
+import ru.shinepilates.finalprojectserver.model.UserModelReturn;
 import ru.shinepilates.finalprojectserver.repository.UsersRepository;
 import ru.shinepilates.finalprojectserver.service.UserService;
 
 import javax.jws.soap.SOAPBinding;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 public class UserController {
@@ -20,18 +23,18 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("/users")
-    public List<UserEntity> getAll(){
-        return userService.getAllUsers();
+    public List<UserModelReturn> getAll(){
+        return userService.getAllUsers().stream().map(UserModelReturn::toModel).collect(Collectors.toList());
     }
 
     @PostMapping("/user")
-    public UserEntity getUser(@RequestBody UserEntity user){
+    public UserModelReturn getUser(@RequestBody UserEntity user){
         return userService.authorisation(user);
     }
 
     @PostMapping("/users")
-    public UserEntity postUser(@RequestBody UserEntity user) {
-        UserEntity u = new UserEntity();
+    public UserModelReturn postUser(@RequestBody UserEntity user) {
+        UserModelReturn u = new UserModelReturn();
         try {
             userService.registration(user);
             u.setFirstname("Пользователь успешно сохранен");
@@ -51,12 +54,13 @@ public class UserController {
     }
 
     @PutMapping("/users")
-    public UserEntity updateUser(@RequestBody UserModel user){
+    public UserModelReturn updateUser(@RequestBody UserModel user){
         String s = user.getLastphone();
         if (s.equals("-")){
-            return userService.update(user);
+            UserEntity u = userService.update(user);
+            return UserModelReturn.toModel(u);
         } else {
-            return userService.updateWithPhone(user);
+            return UserModelReturn.toModel(userService.updateWithPhone(user));
         }
     }
 }

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.shinepilates.finalprojectserver.entity.UserEntity;
 import ru.shinepilates.finalprojectserver.exeptions.UserAlreadyExistException;
 import ru.shinepilates.finalprojectserver.model.UserModel;
+import ru.shinepilates.finalprojectserver.model.UserModelReturn;
 import ru.shinepilates.finalprojectserver.repository.UsersRepository;
 
 import java.util.ArrayList;
@@ -60,20 +61,21 @@ public class UserService {
         }
     }
 
-    public UserEntity authorisation(UserEntity user){
+    public UserModelReturn authorisation(UserEntity user){
         UserEntity u = usersRepository.findByPhone(user.getPhone());
+        UserModelReturn uu;
         if (u != null) {
             if (u.getPassword().equals(user.getPassword())){
-                return u;
+                return UserModelReturn.toModel(u);
             } else {
-                u = new UserEntity();
+                uu = new UserModelReturn();
                 u.setPhone("password");
-                return u;
+                return uu;
             }
         } else {
-            u = new UserEntity();
-            u.setPhone("phone");
-            return u;
+            uu = new UserModelReturn();
+            uu.setPhone("phone");
+            return uu;
         }
     }
 }
